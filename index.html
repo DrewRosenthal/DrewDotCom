@@ -1,85 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>2-Circle Puzzle</title>
+        <title>The Crustable</title>
+        <link rel="icon" href="icon.png">
         <style>
-            body {
+            .outer {
                 display: flex;
                 flex-direction: column;
-                align-items: center;
                 justify-content: center;
-                margin: 0;
-                height: 100vh;
-                font-size: 25px;
-            } h3 {
-                border-style: solid;
-                border-width: 3px;
-                border-color: #000000;
-                border-radius: 10px;
+                align-items: center;
+                min-height: 100vh;
+                padding: 20px;
+                box-sizing: border-box;
+            }
+            .inner {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                gap: 10px;
+            }
+            .inner h1 {
                 padding: 10px;
+                border-style: solid;
+                border-width: 2.5px;
+                border-color: black;
+                background-color: white;
+                color: black;
                 cursor: default;
-                color: #000000;
-                background-color: #ffffff;
-            } h3:hover {
+                user-select: none
+            }
+            .inner h1:hover {
+                border-color: white;
+                background-color: black;
+                color: white;
                 cursor: pointer;
-                color: #ffffff;
-                background-color: #000000;
             }
-        </style>
-        <script defer>
-            let load = false;
-            const scramble = function() {
-                if (load) {
-                    const moves = [
-                        '+',
-                        '++',
-                        '3',
-                        '-',
-                        '--'
-                    ];
-                    let L = '';
-                    let R = '';
-                    const scram = [];
-                    const total = ((Math.floor(Math.random() * 6) + 1) + 6) * 2;
-                    let even = Math.floor(Math.random() * 2) + 1;
-                    let odd = ''
-                    switch (even) {
-                        case 1:
-                            even = 'L';
-                            break;
-                        case 2:
-                            even = 'R';
-                            break;
-                        default:
-                            break;
-                    }
-                    if (even === 'L') {
-                        odd = 'R';;
-                    } else {
-                        if (even === 'R') {
-                            odd = 'L'
-                        }
-                    }
-                    for (let i = 0; i < total; i++) {
-                        const choice = Math.floor(Math.random() * 5)
-                        if ((i + 1) % 2 === 0) {
-                            scram[i] = even + moves[choice]
-                        } else {
-                            scram[i] = odd + moves[choice]
-                        }
-                    }
-                    document.getElementById('txt').innerHTML = scram.join(' ')
+            #number {
+                padding: 10px;
+                font-size: 1.5rem;
+                width: 60px;
+                text-align: center;
+                border: 2.5px solid black;
+                font-weight: bold;
+            }
+            p {
+                padding: 10px;
+                border-style: solid;
+                border-width: 2.5px;
+                border-color: black;
+                background-color: white;
+                color: black;
+                cursor: default;
+            }
+            p:hover {
+                border-color: white;
+                background-color: black;
+                color: white;
+                cursor: pointer;
+            }            
+            .pdf-wrapper {
+                margin-top: 20px;
+                border: 2.5px solid black;
+                background: white;
+                max-width: 100%;
+                overflow: auto;
+            }
+            canvas {
+                display: block;
+                max-width: 100%;
+                height: auto;
+            }
+        </style>        
+        <script type="module">
+            import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
+            const pdfUrl = 'theCrucible.pdf';
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+            let pdfDoc = null;
+            let currentPg = 1;
+            let isRendering = false;
+            function renderPdfPage(pageNumber) {
+                if (!pdfDoc || isRendering) return;
+                if (pageNumber < 1) pageNumber = 1;
+                if (pageNumber > pdfDoc.numPages) pageNumber = pdfDoc.numPages;
+                currentPg = pageNumber;
+                isRendering = true;
+                document.getElementById('number').value = currentPg;
+                pdfDoc.getPage(currentPg).then(page => {
+                    const canvas = document.getElementById('pdf-canvas');
+                    const ctx = canvas.getContext('2d');
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    page.render({
+                        canvasContext: ctx,
+                        viewport: viewport
+                    }).promise.then(() => {
+                        isRendering = false;
+                    });
+                });
+            }
+            window.redirect = function(pg) {
+                const targetPage = parseInt(pg, 10);
+                if (!isNaN(targetPage)) {
+                    renderPdfPage(targetPage);
                 }
-            }
-            document.addEventListener('DOMContentLoaded', function() {
-                load = true;
-                scramble();
-            })
+            };
+            document.addEventListener('DOMContentLoaded', () => {
+                pdfjsLib.getDocument(pdfUrl).promise
+                    .then(pdf => {
+                        pdfDoc = pdf;
+                        renderPdfPage(currentPg);
+                    })
+                    .catch(err => {
+                        console.error('Error loading PDF:', err);
+                    });
+            });
         </script>
     </head>
     <body>
-        <h1 id="txt" style="text-align: center">Generating...</h1>
-        <h3 onclick="scramble()">Scramble</h3>
+        <div class="outer">
+            <div class="pdf-wrapper">
+                <canvas id="pdf-canvas"></canvas>
+            </div>
+
+            <div class="inner">
+                <h1 onclick="redirect(parseInt(document.getElementById('number').value, 10) - 1)">&lt;</h1>
+                <input id="number" type="text" value="1">
+                <h1 onclick="redirect(parseInt(document.getElementById('number').value, 10) + 1)">&gt;</h1>
+            </div>
+            <p id="confirm" onclick="redirect(document.getElementById('number').value)">Confirm</p>
+        </div>
     </body>
 </html>
