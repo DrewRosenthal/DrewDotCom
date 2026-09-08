@@ -89,6 +89,21 @@
                 background-color: black;
                 cursor: pointer;
             }
+            .title h3 {
+                color: black;
+                border-style: solid;
+                border-width: 2.5px;
+                border-color: black;
+                background-color: white;
+                cursor: default;
+                padding: 5px;
+            }
+            .title h3:hover {
+                color: white;
+                border-color: white;
+                background-color: black;
+                cursor: pointer;
+            }
             .menu img {
                 width: 25%;
                 height: 25%
@@ -97,7 +112,7 @@
         </style>        
         <script type="module">
             import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
-            let pdfUrl = '';
+            let pdfUrl = 'books/untitled.pdf';
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
             let pdfDoc = null;
             let currentPg = 1;
@@ -156,7 +171,12 @@
         <div id="page_load" class="outer">
             <h1>Loading...</h1>
         </div>
-        <div id="page_menu" class="outer menu">
+        <div id="page_secure" class="title outer" hidden>
+            <h1>Enter Password</h1>
+            <input id="pass" type="password">
+            <h3 id="press">Confirm</h3>
+        </div>
+        <div id="page_menu" class="outer menu" hidden>
             <h1 id="clickNine">9th Grade</h1>
             <h1 id="clickTen">10th Grade</h1>
             <h1 id="clickEleven">11th Grade</h1>
@@ -232,6 +252,17 @@
                     document.getElementById('page_' + grd).removeAttribute('hidden')
                 }
             }
+            function encode(str) {
+                const bytes = new TextEncoder().encode(str);
+                return bytes.toBase64();
+            }
+            document.getElementById('press').addEventListener('click', () => {
+                if (encode(document.getElementById('pass').value) === 'Y2VhdmVz') {
+                    newPage('menu')
+                } else {
+                    document.getElementById('pass').value = ''
+                }
+            })
             document.getElementById('clickNine').addEventListener('click', () => {
                 newPage('nine')
             })
@@ -336,7 +367,7 @@
             })
             document.addEventListener('DOMContentLoaded', (event) => {
                 document.getElementById('page_load').setAttribute('hidden', '')
-                document.getElementById('page_menu').removeAttribute('hidden')
+                document.getElementById('page_secure').removeAttribute('hidden')
                 load = true
             })
         </script>
