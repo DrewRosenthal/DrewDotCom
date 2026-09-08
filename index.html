@@ -142,6 +142,7 @@
                 const targetPage = parseInt(pg, 10);
                 if (!isNaN(targetPage)) {
                     renderPdfPage(targetPage);
+                    turn();
                 }
             };
             document.addEventListener('DOMContentLoaded', () => {
@@ -181,37 +182,38 @@
             <h1 id="clickTen">10th Grade</h1>
             <h1 id="clickEleven">11th Grade</h1>
             <h1 id="clickTwelve">12th Grade</h1>
+            <h1 onclick="location.reload()">&lt;&lt;</h1>
         </div>
         <div id="page_nine" class="outer menu" hidden>
             <h1 id="theOdyssey">The Odyssey</h1>
             <h1 id="theIliad">The Iliad</h1>
             <h1 id="romeoAndJuliet">Romeo and Juliet</h1>
-            <h1 onclick="location.reload()"><<</h1>
+            <h1 onclick="newPage('menu')">&lt;&lt;</h1>
         </div>
         <div id="page_ten" class="outer menu" hidden>
             <h1 id="night">Night</h1>
             <h1 id="juliusCaesar">Julius Caesar</h1>
             <h1 id="flowersForAlgernon">Flowers for Algernon</h1>
             <h1 id="12AngryMen">12 Angry Men</h1>
-            <h1 onclick="location.reload()"><<</h1>
+            <h1 onclick="newPage('menu')">&lt;&lt;</h1>
         </div>
         <div id="page_eleven" class="outer menu" hidden>
             <h1 id="theCrucible">The Crucible</h1>
             <h1 id="theirEyesWereWatchingGod">Their Eyes Were Watching God</h1>
             <h1 id="theGreatGatsby">The Great Gatsby</h1>
             <h1 id="animalFarm">Animal Farm</h1>
-            <h1 onclick="location.reload()"><<</h1>
+            <h1 onclick="newPage('menu')">&lt;&lt;</h1>
         </div>
         <div id="page_twelve" class="outer menu" hidden>
             <h1 id="beowulf">Beowulf</h1>
             <h1 id="paradiseLost">Paradise Lost</h1>
             <h1 id="macbeth">Macbeth</h1>
             <h1 id="theRimeOfTheAncientMariner">The Rime of the Ancient Mariner</h1>
-            <h1 onclick="location.reload()"><<</h1>
+            <h1 onclick="newPage('menu')">&lt;&lt;</h1>
         </div>
         <div id="page_read" hidden>
             <div class="outer">
-                <h1 id="bookTitle">-</h1>
+                <h1 id="bookTitle"></h1>
                 <div class="pdf-wrapper">
                     <canvas id="pdf-canvas"></canvas>
                 </div>
@@ -222,7 +224,7 @@
                 </div>
                 <p id="confirm" onclick="redirect(document.getElementById('number').value)">Confirm</p>
                 <div class="menu">
-                    <h1 onclick="location.reload()" class="menu">&lt;&lt;</h1>
+                    <h1 onclick="newPage('menu')" class="menu">&lt;&lt;</h1>
                 </div>
             </div>
         </div>
@@ -241,8 +243,8 @@
                     });
             }
             const newPage = function(grd) {
-                console.log(load)
                 if (load) {
+                    document.getElementById('number').value = 1
                     for (const pg of document.body.children) {
                         if (pg.id && pg.id.startsWith('page_')) {
                             console.log('test')
@@ -251,6 +253,22 @@
                     }
                     document.getElementById('page_' + grd).removeAttribute('hidden')
                 }
+            }
+            let turnTimeout = null;
+            function turn() {
+                const numberInput = document.getElementById('number');
+                const pageValue = numberInput ? numberInput.value : '';
+
+                if (turnTimeout) {
+                    clearTimeout(turnTimeout);
+                }
+
+                turnTimeout = setTimeout(() => {
+                    const latestValue = document.getElementById('number')?.value ?? '';
+                    if (latestValue === pageValue) {
+                        location.reload();
+                    }
+                }, 600000);
             }
             function encode(str) {
                 const bytes = new TextEncoder().encode(str);
@@ -271,18 +289,21 @@
                 loadPdf('theOdyssey')
                 document.getElementById('title').innerHTML = 'The Odyssey'
                 document.getElementById('bookTitle').innerHTML = 'The Odyssey'
+                turn()
             })
             document.getElementById('theIliad').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('theIliad')
                 document.getElementById('title').innerHTML = 'The Iliad'
                 document.getElementById('bookTitle').innerHTML = 'The Iilad'
+                turn()
             })
             document.getElementById('romeoAndJuliet').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('romeoAndJuliet')
                 document.getElementById('title').innerHTML = 'Romeo and Juliet'
                 document.getElementById('bookTitle').innerHTML = 'Romeo and Juliet'
+                turn()
             })
             document.getElementById('clickTen').addEventListener('click', () => {
                 newPage('ten')
@@ -292,24 +313,28 @@
                 loadPdf('night')
                 document.getElementById('title').innerHTML = 'Night'
                 document.getElementById('bookTitle').innerHTML = 'Night'
+                turn()
             })
             document.getElementById('juliusCaesar').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('juliusCaesar')
                 document.getElementById('title').innerHTML = 'Julius Caesar'
                 document.getElementById('bookTitle').innerHTML = 'Julius Caesar'
+                turn()
             })
             document.getElementById('flowersForAlgernon').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('flowersForAlgernon')
                 document.getElementById('title').innerHTML = 'Flowers for Algernon'
                 document.getElementById('bookTitle').innerHTML = 'Flowers for Algernon'
+                turn()
             })
             document.getElementById('12AngryMen').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('12AngryMen')
                 document.getElementById('title').innerHTML = '12 Angry Men'
                 document.getElementById('bookTitle').innerHTML = '12 Angry Men'
+                turn()
             })
             document.getElementById('clickEleven').addEventListener('click', () => {
                 newPage('eleven')
@@ -319,24 +344,28 @@
                 loadPdf('theCrucible')
                 document.getElementById('title').innerHTML = 'The Crustable'
                 document.getElementById('bookTitle').innerHTML = 'The Crucible'
+                turn()
             })
             document.getElementById('theirEyesWereWatchingGod').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('theirEyesWereWatchingGod')
                 document.getElementById('title').innerHTML = 'Their Eyes Were Watching God'
                 document.getElementById('bookTitle').innerHTML = 'Their Eyes Were Watching God'
+                turn()
             })
             document.getElementById('theGreatGatsby').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('theGreatGatsby')
                 document.getElementById('title').innerHTML = 'The Great Gatsby'
                 document.getElementById('bookTitle').innerHTML = 'The Great Gatsby'
+                turn()
             })
             document.getElementById('animalFarm').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('animalFarm')
                 document.getElementById('title').innerHTML = 'Animal Farm'
                 document.getElementById('bookTitle').innerHTML = 'Animal Farm'
+                turn()
             })
             document.getElementById('clickTwelve').addEventListener('click', () => {
                 newPage('twelve')
@@ -346,24 +375,28 @@
                 loadPdf('beowulf')
                 document.getElementById('title').innerHTML = 'Beowulf'
                 document.getElementById('bookTitle').innerHTML = 'Beowulf'
+                turn()
             })
             document.getElementById('paradiseLost').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('paradiseLost')
                 document.getElementById('title').innerHTML = 'Paradise Lost'
                 document.getElementById('bookTitle').innerHTML = 'Paradise Lost'
+                turn()
             })
             document.getElementById('macbeth').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('macbeth')
                 document.getElementById('title').innerHTML = 'Macbeth'
                 document.getElementById('bookTitle').innerHTML = 'Macbeth'
+                turn()
             })
             document.getElementById('theRimeOfTheAncientMariner').addEventListener('click', () => {
                 newPage('read')
                 loadPdf('theRimeOfTheAncientMariner')
                 document.getElementById('title').innerHTML = 'The Rime of the Ancient Mariner'
                 document.getElementById('bookTitle').innerHTML = 'The Rime of the Ancient Mariner'
+                turn()
             })
             document.addEventListener('DOMContentLoaded', (event) => {
                 document.getElementById('page_load').setAttribute('hidden', '')
