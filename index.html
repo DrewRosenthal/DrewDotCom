@@ -166,6 +166,11 @@
                         console.error('Error loading PDF:', err);
                     });
             };
+            document.getElementById('number').addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    redirect(document.getElementById('number').value);
+                }
+            });
         </script>
     </head>
     <body>
@@ -259,11 +264,9 @@
             function turn() {
                 const numberInput = document.getElementById('number');
                 const pageValue = numberInput ? numberInput.value : '';
-
                 if (turnTimeout) {
                     clearTimeout(turnTimeout);
                 }
-
                 turnTimeout = setTimeout(() => {
                     const latestValue = document.getElementById('number')?.value ?? '';
                     if (latestValue === pageValue) {
@@ -275,11 +278,19 @@
                 const bytes = new TextEncoder().encode(str);
                 return bytes.toBase64();
             }
-            document.getElementById('press').addEventListener('click', () => {
-                if (encode(document.getElementById('pass').value) === 'Y2VhdmVz') {
-                    newPage('menu')
-                } else {
-                    document.getElementById('pass').value = ''
+            function confirmPass() {
+                if (load) {
+                    if (encode(document.getElementById('pass').value) === 'Y2VhdmVz') {
+                        newPage('menu')
+                    } else {
+                        document.getElementById('pass').value = ''
+                    }
+                }
+            }
+            document.getElementById('press').addEventListener('click', () => {confirmPass()})
+            document.getElementById('pass').addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    confirmPass()
                 }
             })
             document.getElementById('clickNine').addEventListener('click', () => {
