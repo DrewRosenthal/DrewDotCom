@@ -1,419 +1,447 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title id="title">Ms. Eaves' Library</title>
-        <link rel="icon" href="icon.webp">
-        <style>
-            .outer {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-                padding: 20px;
-                box-sizing: border-box;
-            }
-            .inner {
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-                width: 100%;
-                gap: 10px;
-            }
-            .inner h1 {
-                padding: 10px;
-                border-style: solid;
-                border-width: 2.5px;
-                border-color: black;
-                background-color: white;
-                color: black;
-                cursor: default;
-                user-select: none
-            }
-            .inner h1:hover {
-                border-color: white;
-                background-color: black;
-                color: white;
-                cursor: pointer;
-            }
-            #number {
-                padding: 10px;
-                font-size: 1.5rem;
-                width: 60px;
-                text-align: center;
-                border: 2.5px solid black;
-                font-weight: bold;
-            }
-            p {
-                padding: 10px;
-                border-style: solid;
-                border-width: 2.5px;
-                border-color: black;
-                background-color: white;
-                color: black;
-                cursor: default;
-            }
-            p:hover {
-                border-color: white;
-                background-color: black;
-                color: white;
-                cursor: pointer;
-            }            
-            .pdf-wrapper {
-                margin-top: 20px;
-                border: 2.5px solid black;
-                background: white;
-                max-width: 100%;
-                overflow: auto;
-            }
-            canvas {
-                display: block;
-                max-width: 100%;
-                height: auto;
-            }
-            .menu h1 {
-                color: black;
-                border-style: solid;
-                border-width: 2.5px;
-                border-color: black;
-                background-color: white;
-                cursor: default;
-                padding: 5px;
-            }
-            .menu h1:hover {
-                color: white;
-                border-color: white;
-                background-color: black;
-                cursor: pointer;
-            }
-            .title h3 {
-                color: black;
-                border-style: solid;
-                border-width: 2.5px;
-                border-color: black;
-                background-color: white;
-                cursor: default;
-                padding: 5px;
-            }
-            .title h3:hover {
-                color: white;
-                border-color: white;
-                background-color: black;
-                cursor: pointer;
-            }
-            .menu img {
-                width: 25%;
-                height: 25%
-            }
-            [hidden] { display: none !important; }
-        </style>        
-        <script type="module">
-            import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
-            let pdfUrl = 'books/untitled.pdf';
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
-            let pdfDoc = null;
-            let currentPg = 1;
-            let isRendering = false;
-            function renderPdfPage(pageNumber) {
-                if (!pdfDoc || isRendering) return;
-                if (pageNumber < 1) pageNumber = 1;
-                if (pageNumber > pdfDoc.numPages) pageNumber = pdfDoc.numPages;
-                currentPg = pageNumber;
-                isRendering = true;
-                document.getElementById('number').value = currentPg;
-                pdfDoc.getPage(currentPg).then(page => {
-                    const canvas = document.getElementById('pdf-canvas');
-                    const ctx = canvas.getContext('2d');
-                    const viewport = page.getViewport({ scale: 1.5 });
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-                    page.render({
-                        canvasContext: ctx,
-                        viewport: viewport
-                    }).promise.then(() => {
-                        isRendering = false;
-                    });
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="title">Ms. Eaves' Library</title>
+    <link rel="icon" href="icon.webp">
+    <style>
+        .outer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .inner {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .inner h1 {
+            padding: 10px;
+            border-style: solid;
+            border-width: 2.5px;
+            border-color: black;
+            background-color: white;
+            color: black;
+            cursor: default;
+            user-select: none
+        }
+
+        .inner h1:hover {
+            border-color: white;
+            background-color: black;
+            color: white;
+            cursor: pointer;
+        }
+
+        #number {
+            padding: 10px;
+            font-size: 1.5rem;
+            width: 60px;
+            text-align: center;
+            border: 2.5px solid black;
+            font-weight: bold;
+        }
+
+        p {
+            padding: 10px;
+            border-style: solid;
+            border-width: 2.5px;
+            border-color: black;
+            background-color: white;
+            color: black;
+            cursor: default;
+        }
+
+        p:hover {
+            border-color: white;
+            background-color: black;
+            color: white;
+            cursor: pointer;
+        }
+
+        .pdf-wrapper {
+            margin-top: 20px;
+            border: 2.5px solid black;
+            background: white;
+            max-width: 100%;
+            overflow: auto;
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .menu h1 {
+            color: black;
+            border-style: solid;
+            border-width: 2.5px;
+            border-color: black;
+            background-color: white;
+            cursor: default;
+            padding: 5px;
+        }
+
+        .menu h1:hover {
+            color: white;
+            border-color: white;
+            background-color: black;
+            cursor: pointer;
+        }
+
+        .title h3 {
+            color: black;
+            border-style: solid;
+            border-width: 2.5px;
+            border-color: black;
+            background-color: white;
+            cursor: default;
+            padding: 5px;
+        }
+
+        .title h3:hover {
+            color: white;
+            border-color: white;
+            background-color: black;
+            cursor: pointer;
+        }
+
+        .menu img {
+            width: 25%;
+            height: 25%
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+    </style>
+    <script type="module">
+        import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
+        let pdfUrl = 'books/untitled.pdf';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+        let pdfDoc = null;
+        let currentPg = 1;
+        let isRendering = false;
+        function renderPdfPage(pageNumber) {
+            if (!pdfDoc || isRendering) return;
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageNumber > pdfDoc.numPages) pageNumber = pdfDoc.numPages;
+            currentPg = pageNumber;
+            isRendering = true;
+            document.getElementById('number').value = currentPg;
+            pdfDoc.getPage(currentPg).then(page => {
+                const canvas = document.getElementById('pdf-canvas');
+                const ctx = canvas.getContext('2d');
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                }).promise.then(() => {
+                    isRendering = false;
                 });
+            });
+        }
+        window.redirect = function (pg) {
+            const targetPage = parseInt(pg, 10);
+            if (!isNaN(targetPage)) {
+                renderPdfPage(targetPage);
+                turn();
             }
-            window.redirect = function(pg) {
-                const targetPage = parseInt(pg, 10);
-                if (!isNaN(targetPage)) {
-                    renderPdfPage(targetPage);
-                    turn();
-                }
-            };
-            document.addEventListener('DOMContentLoaded', () => {
-                pdfjsLib.getDocument(pdfUrl).promise
-                    .then(pdf => {
-                        pdfDoc = pdf;
-                        renderPdfPage(currentPg);
-                    })
-                    .catch(err => {
-                        console.error('Error loading PDF:', err);
-                    });
-            });
-            window.loadPdf = function(url) {
-                pdfjsLib.getDocument('books/' + url + '.pdf').promise
-                    .then(pdf => {
-                        pdfDoc = pdf;
-                        currentPg = 1;
-                        renderPdfPage(currentPg);
-                    })
-                    .catch(err => {
-                        console.error('Error loading PDF:', err);
-                    });
-            };
-            document.getElementById('number').addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    redirect(document.getElementById('number').value);
-                }
-            });
-        </script>
-    </head>
-    <body>
-        <div id="page_load" class="outer">
-            <h1>Loading...</h1>
-        </div>
-        <div id="page_secure" class="title outer" hidden>
-            <h1>Enter Password</h1>
-            <input id="pass" type="password">
-            <h3 id="press">Confirm</h3>
-        </div>
-        <div id="page_menu" class="outer menu" hidden>
-            <h1 id="clickNine">9th Grade</h1>
-            <h1 id="clickTen">10th Grade</h1>
-            <h1 id="clickEleven">11th Grade</h1>
-            <h1 id="clickTwelve">12th Grade</h1>
-            <h1 onclick="location.reload()">&lt;&lt;</h1>
-        </div>
-        <div id="page_nine" class="outer menu" hidden>
-            <h1 id="theOdyssey">The Odyssey</h1>
-            <h1 id="theIliad">The Iliad</h1>
-            <h1 id="romeoAndJuliet">Romeo and Juliet</h1>
-            <h1 onclick="newPage('menu')">&lt;&lt;</h1>
-        </div>
-        <div id="page_ten" class="outer menu" hidden>
-            <h1 id="night">Night</h1>
-            <h1 id="juliusCaesar">Julius Caesar</h1>
-            <h1 id="flowersForAlgernon">Flowers for Algernon</h1>
-            <h1 id="12AngryMen">12 Angry Men</h1>
-            <h1 onclick="newPage('menu')">&lt;&lt;</h1>
-        </div>
-        <div id="page_eleven" class="outer menu" hidden>
-            <h1 id="theCrucible">The Crucible</h1>
-            <h1 id="theirEyesWereWatchingGod">Their Eyes Were Watching God</h1>
-            <h1 id="theGreatGatsby">The Great Gatsby</h1>
-            <h1 id="animalFarm">Animal Farm</h1>
-            <h1 onclick="newPage('menu')">&lt;&lt;</h1>
-        </div>
-        <div id="page_twelve" class="outer menu" hidden>
-            <h1 id="beowulf">Beowulf</h1>
-            <h1 id="paradiseLost">Paradise Lost</h1>
-            <h1 id="macbeth">Macbeth</h1>
-            <h1 id="theRimeOfTheAncientMariner">The Rime of the Ancient Mariner</h1>
-            <h1 onclick="newPage('menu')">&lt;&lt;</h1>
-        </div>
-        <div id="page_read" hidden>
-            <div class="outer">
-                <h1 id="bookTitle"></h1>
-                <div class="pdf-wrapper">
-                    <canvas id="pdf-canvas"></canvas>
-                </div>
-                <div class="inner">
-                    <h1 onclick="redirect(parseInt(document.getElementById('number').value, 10) - 1)">&lt;</h1>
-                    <input id="number" type="text" value="1">
-                    <h1 onclick="redirect(parseInt(document.getElementById('number').value, 10) + 1)">&gt;</h1>
-                </div>
-                <p id="confirm" onclick="redirect(document.getElementById('number').value)">Confirm</p>
-                <div class="menu">
-                    <h1 onclick="newPage('menu')" class="menu">&lt;&lt;</h1>
-                </div>
+        };
+        document.addEventListener('DOMContentLoaded', () => {
+            pdfjsLib.getDocument(pdfUrl).promise
+                .then(pdf => {
+                    pdfDoc = pdf;
+                    renderPdfPage(currentPg);
+                })
+                .catch(err => {
+                    console.error('Error loading PDF:', err);
+                });
+        });
+        window.loadPdf = function (url) {
+            pdfjsLib.getDocument('books/' + url + '.pdf').promise
+                .then(pdf => {
+                    pdfDoc = pdf;
+                    currentPg = 1;
+                    renderPdfPage(currentPg);
+                })
+                .catch(err => {
+                    console.error('Error loading PDF:', err);
+                });
+        };
+        document.getElementById('number').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                redirect(document.getElementById('number').value);
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div id="page_load" class="outer">
+        <h1>Loading...</h1>
+    </div>
+    <div id="page_secure" class="title outer" hidden>
+        <h1>Enter Password</h1>
+        <input id="pass" type="password">
+        <h3 id="press">Confirm</h3>
+    </div>
+    <div id="page_menu" class="outer menu" hidden>
+        <h1 id="clickNine">9th Grade</h1>
+        <h1 id="clickTen">10th Grade</h1>
+        <h1 id="clickEleven">11th Grade</h1>
+        <h1 id="clickTwelve">12th Grade</h1>
+        <h1 onclick="location.reload()">&lt;&lt;</h1>
+    </div>
+    <div id="page_nine" class="outer menu" hidden>
+        <h1 id="theIliad">The Iliad</h1>
+        <h1 id="theOdyssey">The Odyssey</h1>
+        <h1 id="romeoAndJuliet">Romeo and Juliet</h1>
+        <h1 id="mayer">Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in
+            Black Culture</h1>
+        <h1 onclick="newPage('menu')">&lt;&lt;</h1>
+    </div>
+    <div id="page_ten" class="outer menu" hidden>
+        <h1 id="night">Night</h1>
+        <h1 id="juliusCaesar">Julius Caesar</h1>
+        <h1 id="flowersForAlgernon">Flowers for Algernon</h1>
+        <h1 id="12AngryMen">12 Angry Men</h1>
+        <h1 onclick="newPage('menu')">&lt;&lt;</h1>
+    </div>
+    <div id="page_eleven" class="outer menu" hidden>
+        <h1 id="theCrucible">The Crucible</h1>
+        <h1 id="theirEyesWereWatchingGod">Their Eyes Were Watching God</h1>
+        <h1 id="theGreatGatsby">The Great Gatsby</h1>
+        <h1 id="animalFarm">Animal Farm</h1>
+        <h1 onclick="newPage('menu')">&lt;&lt;</h1>
+    </div>
+    <div id="page_twelve" class="outer menu" hidden>
+        <h1 id="beowulf">Beowulf</h1>
+        <h1 id="paradiseLost">Paradise Lost</h1>
+        <h1 id="macbeth">Macbeth</h1>
+        <h1 id="theRimeOfTheAncientMariner">The Rime of the Ancient Mariner</h1>
+        <h1 onclick="newPage('menu')">&lt;&lt;</h1>
+    </div>
+    <div id="page_read" hidden>
+        <div class="outer">
+            <h1 id="bookTitle"></h1>
+            <div class="pdf-wrapper">
+                <canvas id="pdf-canvas"></canvas>
+            </div>
+            <div class="inner">
+                <h1 onclick="redirect(parseInt(document.getElementById('number').value, 10) - 1)">&lt;</h1>
+                <input id="number" type="text" value="1">
+                <h1 onclick="redirect(parseInt(document.getElementById('number').value, 10) + 1)">&gt;</h1>
+            </div>
+            <p id="confirm" onclick="redirect(document.getElementById('number').value)">Confirm</p>
+            <div class="menu">
+                <h1 onclick="newPage('menu')" class="menu">&lt;&lt;</h1>
             </div>
         </div>
-        <script defer>
-            let load = false
-            function loadPdf(url) {
-                pdfUrl = 'books/'+url+'.pdf';
-                pdfjsLib.getDocument(pdfUrl).promise
-                    .then(pdf => {
-                        pdfDoc = pdf;
-                        currentPg = 1;
-                        renderPdfPage(currentPg);
-                    })
-                    .catch(err => {
-                        console.error('Error loading PDF:', err);
-                    });
-            }
-            const newPage = function(grd) {
-                if (load) {
-                    document.getElementById('number').value = 1
-                    for (const pg of document.body.children) {
-                        if (pg.id && pg.id.startsWith('page_')) {
-                            console.log('test')
-                            pg.setAttribute('hidden', '')
-                        }
-                    }
-                    document.getElementById('page_' + grd).removeAttribute('hidden')
-                }
-            }
-            let turnTimeout = null;
-            function turn() {
-                const numberInput = document.getElementById('number');
-                const pageValue = numberInput ? numberInput.value : '';
-                if (turnTimeout) {
-                    clearTimeout(turnTimeout);
-                }
-                turnTimeout = setTimeout(() => {
-                    const latestValue = document.getElementById('number')?.value ?? '';
-                    if (latestValue === pageValue) {
-                        location.reload();
-                    }
-                }, 600000);
-            }
-            function encode(str) {
-                const bytes = new TextEncoder().encode(str);
-                return bytes.toBase64();
-            }
-            function confirmPass() {
-                if (load) {
-                    if (encode(document.getElementById('pass').value) === 'Y2VhdmVz') {
-                        newPage('menu')
-                    } else {
-                        document.getElementById('pass').value = ''
+    </div>
+    <script defer>
+        let load = false
+        function loadPdf(url) {
+            pdfUrl = 'books/' + url + '.pdf';
+            pdfjsLib.getDocument(pdfUrl).promise
+                .then(pdf => {
+                    pdfDoc = pdf;
+                    currentPg = 1;
+                    renderPdfPage(currentPg);
+                })
+                .catch(err => {
+                    console.error('Error loading PDF:', err);
+                });
+        }
+        const newPage = function (grd) {
+            if (load) {
+                document.getElementById('number').value = 1
+                for (const pg of document.body.children) {
+                    if (pg.id && pg.id.startsWith('page_')) {
+                        console.log('test')
+                        pg.setAttribute('hidden', '')
                     }
                 }
+                document.getElementById('page_' + grd).removeAttribute('hidden')
             }
-            document.getElementById('press').addEventListener('click', () => {confirmPass()})
-            document.getElementById('pass').addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    confirmPass()
+        }
+        let turnTimeout = null;
+        function turn() {
+            const numberInput = document.getElementById('number');
+            const pageValue = numberInput ? numberInput.value : '';
+            if (turnTimeout) {
+                clearTimeout(turnTimeout);
+            }
+            turnTimeout = setTimeout(() => {
+                const latestValue = document.getElementById('number')?.value ?? '';
+                if (latestValue === pageValue) {
+                    location.reload();
                 }
-            })
-            document.getElementById('clickNine').addEventListener('click', () => {
-                newPage('nine')
-            })
-            document.getElementById('theOdyssey').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('theOdyssey')
-                document.getElementById('title').innerHTML = 'The Odyssey'
-                document.getElementById('bookTitle').innerHTML = 'The Odyssey'
-                turn()
-            })
-            document.getElementById('theIliad').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('theIliad')
-                document.getElementById('title').innerHTML = 'The Iliad'
-                document.getElementById('bookTitle').innerHTML = 'The Iilad'
-                turn()
-            })
-            document.getElementById('romeoAndJuliet').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('romeoAndJuliet')
-                document.getElementById('title').innerHTML = 'Romeo and Juliet'
-                document.getElementById('bookTitle').innerHTML = 'Romeo and Juliet'
-                turn()
-            })
-            document.getElementById('clickTen').addEventListener('click', () => {
-                newPage('ten')
-            })
-            document.getElementById('night').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('night')
-                document.getElementById('title').innerHTML = 'Night'
-                document.getElementById('bookTitle').innerHTML = 'Night'
-                turn()
-            })
-            document.getElementById('juliusCaesar').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('juliusCaesar')
-                document.getElementById('title').innerHTML = 'Julius Caesar'
-                document.getElementById('bookTitle').innerHTML = 'Julius Caesar'
-                turn()
-            })
-            document.getElementById('flowersForAlgernon').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('flowersForAlgernon')
-                document.getElementById('title').innerHTML = 'Flowers for Algernon'
-                document.getElementById('bookTitle').innerHTML = 'Flowers for Algernon'
-                turn()
-            })
-            document.getElementById('12AngryMen').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('12AngryMen')
-                document.getElementById('title').innerHTML = '12 Angry Men'
-                document.getElementById('bookTitle').innerHTML = '12 Angry Men'
-                turn()
-            })
-            document.getElementById('clickEleven').addEventListener('click', () => {
-                newPage('eleven')
-            })
-            document.getElementById('theCrucible').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('theCrucible')
-                document.getElementById('title').innerHTML = 'The Crustable'
-                document.getElementById('bookTitle').innerHTML = 'The Crucible'
-                turn()
-            })
-            document.getElementById('theirEyesWereWatchingGod').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('theirEyesWereWatchingGod')
-                document.getElementById('title').innerHTML = 'Their Eyes Were Watching God'
-                document.getElementById('bookTitle').innerHTML = 'Their Eyes Were Watching God'
-                turn()
-            })
-            document.getElementById('theGreatGatsby').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('theGreatGatsby')
-                document.getElementById('title').innerHTML = 'The Great Gatsby'
-                document.getElementById('bookTitle').innerHTML = 'The Great Gatsby'
-                turn()
-            })
-            document.getElementById('animalFarm').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('animalFarm')
-                document.getElementById('title').innerHTML = 'Animal Farm'
-                document.getElementById('bookTitle').innerHTML = 'Animal Farm'
-                turn()
-            })
-            document.getElementById('clickTwelve').addEventListener('click', () => {
-                newPage('twelve')
-            })
-            document.getElementById('beowulf').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('beowulf')
-                document.getElementById('title').innerHTML = 'Beowulf'
-                document.getElementById('bookTitle').innerHTML = 'Beowulf'
-                turn()
-            })
-            document.getElementById('paradiseLost').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('paradiseLost')
-                document.getElementById('title').innerHTML = 'Paradise Lost'
-                document.getElementById('bookTitle').innerHTML = 'Paradise Lost'
-                turn()
-            })
-            document.getElementById('macbeth').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('macbeth')
-                document.getElementById('title').innerHTML = 'Macbeth'
-                document.getElementById('bookTitle').innerHTML = 'Macbeth'
-                turn()
-            })
-            document.getElementById('theRimeOfTheAncientMariner').addEventListener('click', () => {
-                newPage('read')
-                loadPdf('theRimeOfTheAncientMariner')
-                document.getElementById('title').innerHTML = 'The Rime of the Ancient Mariner'
-                document.getElementById('bookTitle').innerHTML = 'The Rime of the Ancient Mariner'
-                turn()
-            })
-            document.addEventListener('DOMContentLoaded', (event) => {
-                document.getElementById('page_load').setAttribute('hidden', '')
-                document.getElementById('page_secure').removeAttribute('hidden')
-                load = true
-            })
-        </script>
-    </body>
+            }, 600000);
+        }
+        function encode(str) {
+            const bytes = new TextEncoder().encode(str);
+            return bytes.toBase64();
+        }
+        function confirmPass() {
+            if (load) {
+                if (encode(document.getElementById('pass').value) === 'Y2VhdmVz') {
+                    newPage('menu')
+                } else {
+                    document.getElementById('pass').value = ''
+                }
+            }
+        }
+        document.getElementById('press').addEventListener('click', () => { confirmPass() })
+        document.getElementById('pass').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                confirmPass()
+            }
+        })
+        document.getElementById('clickNine').addEventListener('click', () => {
+            newPage('nine')
+        })
+        document.getElementById('theOdyssey').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('theOdyssey')
+            document.getElementById('title').innerHTML = 'The Odyssey'
+            document.getElementById('bookTitle').innerHTML = 'The Odyssey'
+            turn()
+        })
+        document.getElementById('theIliad').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('theIliad')
+            document.getElementById('title').innerHTML = 'The Iliad'
+            document.getElementById('bookTitle').innerHTML = 'The Iilad'
+            turn()
+        })
+        document.getElementById('romeoAndJuliet').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('romeoAndJuliet')
+            document.getElementById('title').innerHTML = 'Romeo and Juliet'
+            document.getElementById('bookTitle').innerHTML = 'Romeo and Juliet'
+            turn()
+        })
+        document.getElementById('mayer').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('mayer')
+            document.getElementById('title').innerHTML = ' Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in Black Culture'
+            document.getElementById('bookTitle').innerHTML = ' Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in Black Culture'
+            turn()
+        })
+        document.getElementById('clickTen').addEventListener('click', () => {
+            newPage('ten')
+        })
+        document.getElementById('night').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('night')
+            document.getElementById('title').innerHTML = 'Night'
+            document.getElementById('bookTitle').innerHTML = 'Night'
+            turn()
+        })
+        document.getElementById('juliusCaesar').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('juliusCaesar')
+            document.getElementById('title').innerHTML = 'Julius Caesar'
+            document.getElementById('bookTitle').innerHTML = 'Julius Caesar'
+            turn()
+        })
+        document.getElementById('flowersForAlgernon').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('flowersForAlgernon')
+            document.getElementById('title').innerHTML = 'Flowers for Algernon'
+            document.getElementById('bookTitle').innerHTML = 'Flowers for Algernon'
+            turn()
+        })
+        document.getElementById('12AngryMen').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('12AngryMen')
+            document.getElementById('title').innerHTML = '12 Angry Men'
+            document.getElementById('bookTitle').innerHTML = '12 Angry Men'
+            turn()
+        })
+        document.getElementById('clickEleven').addEventListener('click', () => {
+            newPage('eleven')
+        })
+        document.getElementById('theCrucible').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('theCrucible')
+            document.getElementById('title').innerHTML = 'The Crustable'
+            document.getElementById('bookTitle').innerHTML = 'The Crucible'
+            turn()
+        })
+        document.getElementById('theirEyesWereWatchingGod').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('theirEyesWereWatchingGod')
+            document.getElementById('title').innerHTML = 'Their Eyes Were Watching God'
+            document.getElementById('bookTitle').innerHTML = 'Their Eyes Were Watching God'
+            turn()
+        })
+        document.getElementById('theGreatGatsby').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('theGreatGatsby')
+            document.getElementById('title').innerHTML = 'The Great Gatsby'
+            document.getElementById('bookTitle').innerHTML = 'The Great Gatsby'
+            turn()
+        })
+        document.getElementById('animalFarm').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('animalFarm')
+            document.getElementById('title').innerHTML = 'Animal Farm'
+            document.getElementById('bookTitle').innerHTML = 'Animal Farm'
+            turn()
+        })
+        document.getElementById('clickTwelve').addEventListener('click', () => {
+            newPage('twelve')
+        })
+        document.getElementById('beowulf').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('beowulf')
+            document.getElementById('title').innerHTML = 'Beowulf'
+            document.getElementById('bookTitle').innerHTML = 'Beowulf'
+            turn()
+        })
+        document.getElementById('paradiseLost').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('paradiseLost')
+            document.getElementById('title').innerHTML = 'Paradise Lost'
+            document.getElementById('bookTitle').innerHTML = 'Paradise Lost'
+            turn()
+        })
+        document.getElementById('macbeth').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('macbeth')
+            document.getElementById('title').innerHTML = 'Macbeth'
+            document.getElementById('bookTitle').innerHTML = 'Macbeth'
+            turn()
+        })
+        document.getElementById('theRimeOfTheAncientMariner').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('theRimeOfTheAncientMariner')
+            document.getElementById('title').innerHTML = 'The Rime of the Ancient Mariner'
+            document.getElementById('bookTitle').innerHTML = 'The Rime of the Ancient Mariner'
+            turn()
+        })
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('page_load').setAttribute('hidden', '')
+            document.getElementById('page_secure').removeAttribute('hidden')
+            load = true
+        })
+    </script>
+</body>
+
 </html>
