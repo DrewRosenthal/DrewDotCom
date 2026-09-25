@@ -205,15 +205,13 @@
         <h1 id="clickTen">10th Grade</h1>
         <h1 id="clickEleven">11th Grade</h1>
         <h1 id="clickTwelve">12th Grade</h1>
+        <h1 id="clickExtra">Extras</h1>
         <h1 onclick="location.reload()">&lt;&lt;</h1>
     </div>
     <div id="page_nine" class="outer menu" hidden>
         <h1 id="theIliad">The Iliad</h1>
         <h1 id="theOdyssey">The Odyssey</h1>
         <h1 id="romeoAndJuliet">Romeo and Juliet</h1>
-        <h1 id="mayer">Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in
-            Black Culture</h1>
-        <h1 id="apology">The Art of Recantation Acknowledging a Faltering Essay</h1>
         <h1 onclick="newPage('menu')">&lt;&lt;</h1>
     </div>
     <div id="page_ten" class="outer menu" hidden>
@@ -235,6 +233,12 @@
         <h1 id="paradiseLost">Paradise Lost</h1>
         <h1 id="macbeth">Macbeth</h1>
         <h1 id="theRimeOfTheAncientMariner">The Rime of the Ancient Mariner</h1>
+        <h1 onclick="newPage('menu')">&lt;&lt;</h1>
+    </div>
+    <div id="page_extra" class="outer menu" hidden>
+        <h1 id="mayer">Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in
+            Black Culture</h1>
+        <h1 id="apology">The Art of Recantation Acknowledging a Faltering Essay</h1>
         <h1 onclick="newPage('menu')">&lt;&lt;</h1>
     </div>
     <div id="page_read" hidden>
@@ -337,20 +341,6 @@
             document.getElementById('bookTitle').innerHTML = 'Romeo and Juliet'
             turn()
         })
-        document.getElementById('mayer').addEventListener('click', () => {
-            newPage('read')
-            loadPdf('mayer')
-            document.getElementById('title').innerHTML = 'Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in Black Culture'
-            document.getElementById('bookTitle').innerHTML = 'Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in Black Culture'
-            turn()
-        })
-        document.getElementById('apology').addEventListener('click', () => {
-            newPage('read')
-            loadPdf('apology')
-            document.getElementById('title').innerHTML = 'The Art of Recantation Acknowledging a Faltering Essay'
-            document.getElementById('bookTitle').innerHTML = 'The Art of Recantation Acknowledging a Faltering Essay'
-            turn()
-        })
         document.getElementById('clickTen').addEventListener('click', () => {
             newPage('ten')
         })
@@ -442,6 +432,23 @@
             loadPdf('theRimeOfTheAncientMariner')
             document.getElementById('title').innerHTML = 'The Rime of the Ancient Mariner'
             document.getElementById('bookTitle').innerHTML = 'The Rime of the Ancient Mariner'
+            turn()
+        })
+        document.getElementById('clickExtra').addEventListener('click', () => {
+            newPage('extra')
+        })
+        document.getElementById('mayer').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('mayer')
+            document.getElementById('title').innerHTML = 'Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in Black Culture'
+            document.getElementById('bookTitle').innerHTML = 'Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in Black Culture'
+            turn()
+        })
+        document.getElementById('apology').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('apology')
+            document.getElementById('title').innerHTML = 'The Art of Recantation Acknowledging a Faltering Essay'
+            document.getElementById('bookTitle').innerHTML = 'The Art of Recantation Acknowledging a Faltering Essay'
             turn()
         })
         document.addEventListener('DOMContentLoaded', (event) => {
