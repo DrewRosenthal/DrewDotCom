@@ -213,6 +213,7 @@
         <h1 id="romeoAndJuliet">Romeo and Juliet</h1>
         <h1 id="mayer">Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in
             Black Culture</h1>
+        <h1 id="apology">The Art of Recantation Acknowledging a Faltering Essay</h1>
         <h1 onclick="newPage('menu')">&lt;&lt;</h1>
     </div>
     <div id="page_ten" class="outer menu" hidden>
@@ -339,8 +340,15 @@
         document.getElementById('mayer').addEventListener('click', () => {
             newPage('read')
             loadPdf('mayer')
-            document.getElementById('title').innerHTML = ' Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in Black Culture'
-            document.getElementById('bookTitle').innerHTML = ' Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in Black Culture'
+            document.getElementById('title').innerHTML = 'Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in Black Culture'
+            document.getElementById('bookTitle').innerHTML = 'Culinary Echoes: Exploring the Enduring Allure of Fried Chicken, Watermelon, and Kool Aid in Black Culture'
+            turn()
+        })
+        document.getElementById('apology').addEventListener('click', () => {
+            newPage('read')
+            loadPdf('apology')
+            document.getElementById('title').innerHTML = 'The Art of Recantation Acknowledging a Faltering Essay'
+            document.getElementById('bookTitle').innerHTML = 'The Art of Recantation Acknowledging a Faltering Essay'
             turn()
         })
         document.getElementById('clickTen').addEventListener('click', () => {
