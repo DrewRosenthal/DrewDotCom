@@ -135,6 +135,14 @@
             height: 25%
         }
 
+        .Y29kZQ\=\= h1 {
+            color: #ffffff
+        }
+
+        .Y29kZQ\=\= h1:hover {
+            color: #000000
+        }
+
         [hidden] {
             display: none !important;
         }
@@ -259,12 +267,23 @@
             </div>
             <p id="confirm" onclick="redirect(document.getElementById('number').value)">Confirm</p>
             <div class="menu">
-                <h1 onclick="newPage('menu')" class="menu">&lt;&lt;</h1>
+                <h1 id="back" class="menu">&lt;&lt;</h1>
             </div>
         </div>
     </div>
+    <div id="page_code" class="outer" hidden>
+        <input id="codeText" type="password">
+        <div class="inner menu Y29kZQ==">
+            <h1 onclick="console.log(ZGVjb2Rl(document.getElementById('codeText').value));newPage('secure')">
+                &lt;&lt;</h1>
+            <h1 onclick="newPage('secure')">--</h1>
+            <h1 onclick="console.log(ZW5jb2Rl(document.getElementById('codeText').value));newPage('secure')">
+                &gt;&gt;</h1>
+        </div>
+    </div>
     <script defer>
-        let load = false
+        let load = false;
+        let code = '';
         function loadPdf(url) {
             pdfUrl = 'books/' + url + '.pdf';
             pdfjsLib.getDocument(pdfUrl).promise
@@ -282,11 +301,13 @@
                 document.getElementById('number').value = 1
                 for (const pg of document.body.children) {
                     if (pg.id && pg.id.startsWith('page_')) {
-                        console.log('test')
                         pg.setAttribute('hidden', '')
                     }
                 }
                 document.getElementById('page_' + grd).removeAttribute('hidden')
+                if (grd === 'secure' || grd === 'menu') {
+                    document.getElementById('title').innerHTML = "Ms. Eaves' Library"
+                }
             }
         }
         let turnTimeout = null;
@@ -303,17 +324,36 @@
                 }
             }, 600000);
         }
-        function encode(str) {
+        function ZW5jb2Rl(str) {
             const bytes = new TextEncoder().encode(str);
             return bytes.toBase64();
         }
+        function ZGVjb2Rl(str) {
+            const bytes = Uint8Array.fromBase64(str);
+            return new TextDecoder().decode(bytes);
+        }
         function confirmPass() {
             if (load) {
-                if (encode(document.getElementById('pass').value) === 'Y2VhdmVz') {
-                    newPage('menu')
-                } else {
-                    document.getElementById('pass').value = ''
+                if (ZW5jb2Rl(document.getElementById(ZGVjb2Rl('cGFzcw==')).value) === 'Y2VhdmVz') {
+                    newPage(ZGVjb2Rl('bWVudQ=='))
+                } else if (ZW5jb2Rl(document.getElementById(ZGVjb2Rl('cGFzcw==')).value) === 'cmFjaXNt') {
+                    newPage(ZGVjb2Rl('cmVhZA=='));
+                    loadPdf(ZGVjb2Rl('YXBvbG9neQ=='));
+                    document.getElementById(ZGVjb2Rl('dGl0bGU=')).innerHTML = ZGVjb2Rl('VGhlIEFydCBvZiBSZWNhbnRhdGlvbjogQWNrbm93bGVkZ2luZyBhIEZhbHRlcmluZyBFc3NheQ==');
+                    document.getElementById(ZGVjb2Rl('Ym9va1RpdGxl')).innerHTML = ZGVjb2Rl('VGhlIEFydCBvZiBSZWNhbnRhdGlvbjogQWNrbm93bGVkZ2luZyBhIEZhbHRlcmluZyBFc3NheQ==');
+                    turn()
+                } else if (ZW5jb2Rl(document.getElementById(ZGVjb2Rl('cGFzcw==')).value) === 'Y29kZQ==') {
+                    newPage(ZGVjb2Rl('Y29kZQ=='));
+                    document.getElementById(ZGVjb2Rl('Y29kZVRleHQ=')).value = ''
+                } else if (ZW5jb2Rl(document.getElementById(ZGVjb2Rl('cGFzcw==')).value) === 'ZmVlbGdvb2Q=') {
+                    newPage(ZGVjb2Rl('cmVhZA=='))
+                    loadPdf(ZGVjb2Rl('Z29yaWxsYXo='))
+                    document.getElementById(ZGVjb2Rl('dGl0bGU=')).innerHTML = ZGVjb2Rl('R29yaWxsYXo6IFJpc2Ugb2YgdGhlIE9ncmU=');
+                    document.getElementById(ZGVjb2Rl('Ym9va1RpdGxl')).innerHTML = ZGVjb2Rl('R29yaWxsYXo6IFJpc2Ugb2YgdGhlIE9ncmU=');
+                    turn()
                 }
+                code = ZW5jb2Rl(document.getElementById('pass').value);
+                document.getElementById('pass').value = '';
             }
         }
         document.getElementById('press').addEventListener('click', () => { confirmPass() })
@@ -438,6 +478,14 @@
             document.getElementById('title').innerHTML = 'The Rime of the Ancient Mariner'
             document.getElementById('bookTitle').innerHTML = 'The Rime of the Ancient Mariner'
             turn()
+        })
+        document.getElementById('back').addEventListener('click', () => {
+            if (code === 'Y2VhdmVz') {
+                newPage('menu')
+            } else {
+                newPage('secure')
+            }
+            document.getElementById('title').innerHTML = "Ms. Eaves' Library"
         })
         document.addEventListener('DOMContentLoaded', (event) => {
             document.getElementById('page_load').setAttribute('hidden', '')
