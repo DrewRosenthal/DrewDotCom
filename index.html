@@ -143,6 +143,10 @@
             color: #000000
         }
 
+        .book canvas {
+            zoom: 50%
+        }
+
         [hidden] {
             display: none !important;
         }
@@ -254,7 +258,7 @@
         <h1 id="theRimeOfTheAncientMariner">The Rime of the Ancient Mariner</h1>
         <h1 onclick="newPage('menu')">&lt;&lt;</h1>
     </div>
-    <div id="page_read" hidden>
+    <div id="page_read" class="book" hidden>
         <div class="outer">
             <h1 id="bookTitle"></h1>
             <div class="pdf-wrapper">
