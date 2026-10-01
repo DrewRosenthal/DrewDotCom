@@ -357,12 +357,6 @@
                     document.getElementById(ZGVjb2Rl('dGl0bGU=')).innerHTML = ZGVjb2Rl('UmlzZSBvZiB0aGUgT2dyZQ==');
                     document.getElementById(ZGVjb2Rl('Ym9va1RpdGxl')).innerHTML = ZGVjb2Rl('UmlzZSBvZiB0aGUgT2dyZQ==');
                     turn()
-                } else if (ZW5jb2Rl(document.getElementById(ZGVjb2Rl('cGFzcw==')).value) === 'dGhlYmF0aA==') {
-                    newPage(ZGVjb2Rl('cmVhZA=='))
-                    loadPdf(ZGVjb2Rl('Z29yaWxsYXpUd28='))
-                    document.getElementById(ZGVjb2Rl('dGl0bGU=')).innerHTML = ZGVjb2Rl('RGF3biBvZiB0aGUgT2dyZQ==');
-                    document.getElementById(ZGVjb2Rl('Ym9va1RpdGxl')).innerHTML = ZGVjb2Rl('RGF3biBvZiB0aGUgT2dyZQ==');
-                    turn()
                 }
                 code = ZW5jb2Rl(document.getElementById('pass').value);
                 document.getElementById('pass').value = '';
@@ -498,7 +492,6 @@
                 newPage('secure')
             }
             loadPdf(ZGVjb2Rl('dW50aXRsZWQ='))
-            console.log('test')
             document.getElementById('title').innerHTML = "Ms. Eaves' Library"
         })
         document.addEventListener('DOMContentLoaded', (event) => {
