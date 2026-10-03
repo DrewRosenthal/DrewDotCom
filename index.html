@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="title">Ms. Eaves' Library</title>
-    <link rel="icon" href="icon.webp">
+    <title id="title">DrewDotCom</title>
+    <link id="favicon" rel="icon" href="alt.png" type="image/png">
     <style>
         @font-face {
             font-family: font;
@@ -282,7 +282,7 @@
         </div>
     </div>
     <div id="page_code" class="outer" hidden>
-        <input id="codeText" class="pass-text" type="text">
+        <input id="codeText" class="pass-text" type="text" autcomplete="off">
         <div class="inner menu Y29kZQ==">
             <h1
                 onclick="console.log(ZGVjb2Rl(document.getElementById('codeText').value));document.getElementById('codeText').value=''">
@@ -319,8 +319,12 @@
                     }
                 }
                 document.getElementById('page_' + grd).removeAttribute('hidden')
-                if (grd === 'secure' || grd === 'menu') {
+                if (grd === 'secure') {
+                    document.getElementById('title').innerHTML = 'DrewDotCom'
+                    document.getElementById('favicon').setAttribute('href', 'alt.png')
+                } else if (grd === 'menu') {
                     document.getElementById('title').innerHTML = "Ms. Eaves' Library"
+                    document.getElementById('favicon').setAttribute('href', 'teach.png')
                 }
             }
         }
