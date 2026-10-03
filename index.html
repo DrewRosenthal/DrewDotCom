@@ -147,6 +147,12 @@
             zoom: 50%
         }
 
+        .pass-text {
+            -webkit-text-security: disc;
+            text-security: disc;
+            font-family: 'text-security-disc', monospace
+        }
+
         [hidden] {
             display: none !important;
         }
@@ -220,8 +226,8 @@
         <h1>Loading...</h1>
     </div>
     <div id="page_secure" class="title outer" hidden>
-        <h1>Enter Password</h1>
-        <input id="pass" type="password">
+	<h1>Enter Password:</h1>
+        <input id="pass" class="pass-text" type="text">
         <h3 id="press">Confirm</h3>
     </div>
     <div id="page_menu" class="outer menu" hidden>
@@ -276,7 +282,7 @@
         </div>
     </div>
     <div id="page_code" class="outer" hidden>
-        <input id="codeText" type="password">
+        <input id="codeText" class="pass-text" type="text">
         <div class="inner menu Y29kZQ==">
             <h1
                 onclick="console.log(ZGVjb2Rl(document.getElementById('codeText').value));document.getElementById('codeText').value=''">
