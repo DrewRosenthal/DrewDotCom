@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DrewDotCom</title>
+    <style>
+        @font-face {
+            font-family: font;
+            src: url("font.ttf") format("truetype");
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: #000000;
+            font-family: font;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #questions,
+        #game {
+            width: 100%;
+            max-width: 600px;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 15px;
+        }
+
+        #questions {
+            display: flex;
+        }
+
+        #game {
+            display: none;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        #player,
+        #status {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .answers {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .answers button,
+        #restart {
+            padding: 15px;
+            border-style: solid;
+            border-color: #000000;
+            border-radius: 8px;
+            color: #000000;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #ffffff;
+            font-family: font;
+        }
+
+        .answers button:hover,
+        #restart:hover {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        #chessboard {
+            width: min(95vw, 560px);
+            aspect-ratio: 1;
+            display: grid;
+            grid-template-columns: repeat(8, minmax(0, 1fr));
+            grid-template-rows: repeat(8, minmax(0, 1fr));
+            border: 4px solid #000000;
+            flex-shrink: 0;
+        }
+
+        .square {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(22px, 7vw, 48px);
+            cursor: pointer;
+            user-select: none;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(22px, 7vw, 48px);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .light {
+            background: #f0d9b5;
+        }
+
+        .dark {
+            background: #b58863;
+        }
+
+        .selected {
+            outline: 4px solid #ffeb3b;
+            outline-offset: -4px;
+        }
+
+        #restart {
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="questions">
+        <h1>Mayer and Liam's English Project!</h1>
+        <p id="player">White</p>
+        <h2 id="question"></h2>
+        <div class="answers">
+            <button id="a"></button>
+            <button id="b"></button>
+            <button id="c"></button>
+            <button id="d"></button>
+        </div>
+    </div>
+    <div id="game">
+        <h1>Odyssey Chess</h1>
+        <p id="status">White's turn</p>
+        <div id="chessboard"></div>
+        <button id="restart" onclick="resetGame()">Restart Game</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script>
+        const questions = [
+            [
+                "Who is the author of The Odyssey?",
+                "Homer",
+                "Virgil",
+                "Sophocles",
+                "Plato"
+            ],
+            [
+                "Who is Odysseus's wife?",
+                "Penelope",
+                "Helen",
+                "Circe",
+                "Calypso"
+            ],
+            [
+                "What is the name of Odysseus's son?",
+                "Telemachus",
+                "Achilles",
+                "Hector",
+                "Paris"
+            ],
+            [
+                "What creature does Odysseus encounter in the cave?",
+                "Cyclops",
+                "Minotaur",
+                "Hydra",
+                "Sphinx"
+            ],
+            [
+                "What is the name of the Cyclops?",
+                "Polyphemus",
+                "Poseidon",
+                "Aeolus",
+                "Hermes"
+            ],
+            [
+                "Who is the Greek god of the sea?",
+                "Poseidon",
+                "Zeus",
+                "Apollo",
+                "Ares"
+            ],
+            [
+                "What is the name of Odysseus's homeland?",
+                "Ithaca",
+                "Troy",
+                "Sparta",
+                "Athens"
+            ],
+            [
+                "Who helps Odysseus during his journey?",
+                "Athena",
+                "Hera",
+                "Aphrodite",
+                "Demeter"
+            ],
+            [
+                "What do the Sirens use to attract sailors?",
+                "Their singing",
+                "Their strength",
+                "Their ships",
+                "Their treasure"
+            ],
+            [
+                "What is Odysseus trying to do throughout the story?",
+                "Return home",
+                "Become king of Troy",
+                "Find the Golden Fleece",
+                "Conquer Egypt"
+            ]
+        ];
+        let questionPlayer = "white";
+        let currentQuestion = null;
+        let answersLocked = false;
+        const chess = new Chess();
+        let currentPlayer = "white";
+        let selectedSquare = null;
+        function shuffle(list) {
+            const result = [...list];
+            for (let i = result.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [result[i], result[j]] = [result[j], result[i]];
+            }
+            return result;
+        }
+        function ask() {
+            answersLocked = false;
+            const randomIndex = Math.floor(Math.random() * questions.length);
+            currentQuestion = questions[randomIndex];
+            const answers = shuffle([
+                currentQuestion[1],
+                currentQuestion[2],
+                currentQuestion[3],
+                currentQuestion[4]
+            ]);
+            document.getElementById("question").textContent =
+                currentQuestion[0];
+            document.getElementById("player").textContent =
+                questionPlayer.charAt(0).toUpperCase() +
+                questionPlayer.slice(1) + "'s turn!";
+            ["a", "b", "c", "d"].forEach((id, index) => {
+                const button = document.getElementById(id);
+                button.textContent = answers[index];
+                button.disabled = false;
+                button.onclick = () => checkAnswer(answers[index]);
+            });
+            console.log(currentQuestion[1])
+        }
+        function checkAnswer(answer) {
+            if (answersLocked) return;
+            answersLocked = true;
+            if (answer === currentQuestion[1]) {
+                currentPlayer = questionPlayer;
+                document.getElementById("question").textContent =
+                    "Correct! " + currentPlayer + " gets to move.";
+                document.getElementById("game").style.display = "flex";
+                document.getElementById("questions").style.display = "none";
+                selectedSquare = null;
+                renderBoard();
+                updateStatus();
+            } else {
+                document.getElementById("question").textContent =
+                    "Incorrect! The other player gets the next question.";
+                setTimeout(() => {
+                    switchPlayer();
+                }, 1200);
+            }
+        }
+        function switchPlayer() {
+            questionPlayer = questionPlayer === "white" ? "black" : "white";
+            const fenParts = chess.fen().split(" ");
+            fenParts[1] = questionPlayer === "white" ? "w" : "b";
+            fenParts[3] = "-";
+            try {
+                chess.load(fenParts.join(" "));
+            } catch (error) {
+                console.error("Could not switch chess turn:", error);
+                document.getElementById("question").textContent =
+                    "Could not switch turns. Please restart the game.";
+                return;
+            }
+            document.getElementById("game").style.display = "none";
+            document.getElementById("questions").style.display = "flex";
+            ask();
+        }
+        function renderBoard() {
+            const chessboard = document.getElementById("chessboard");
+            chessboard.innerHTML = "";
+            const position = chess.board();
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const square = document.createElement("div");
+                    const file = "abcdefgh"[col];
+                    const rank = 8 - row;
+                    const squareName = file + rank;
+                    square.classList.add("square");
+                    square.classList.add(
+                        (row + col) % 2 === 0 ? "light" : "dark"
+                    );
+                    const piece = position[row][col];
+                    if (piece) {
+                        const symbols = {
+                            wk: "♔", wq: "♕", wr: "♖",
+                            wb: "♗", wn: "♘", wp: "♙",
+                            bk: "♚", bq: "♛", br: "♜",
+                            bb: "♝", bn: "♞", bp: "♟"
+                        };
+                        square.textContent =
+                            symbols[piece.color + piece.type];
+                    }
+                    if (selectedSquare === squareName) {
+                        square.classList.add("selected");
+                    }
+                    square.onclick = () => handleSquareClick(squareName);
+                    chessboard.appendChild(square);
+                }
+            }
+        }
+        function updateStatus() {
+            const player = chess.turn() === "w" ? "White" : "Black";
+            let message = player + "'s move";
+            if (chess.in_check()) {
+                message += " — Check!";
+            }
+            document.getElementById("status").textContent = message;
+        }
+        function handleSquareClick(square) {
+            const piece = chess.get(square);
+            if (!selectedSquare) {
+                if (piece && piece.color === chess.turn()) {
+                    selectedSquare = square;
+                    renderBoard();
+                }
+                return;
+            }
+            if (piece && piece.color === chess.turn()) {
+                selectedSquare = square;
+                renderBoard();
+                return;
+            }
+            try {
+                const move = chess.move({
+                    from: selectedSquare,
+                    to: square,
+                    promotion: "q"
+                });
+                if (!move) {
+                    selectedSquare = null;
+                    renderBoard();
+                    return;
+                }
+                selectedSquare = null;
+                renderBoard();
+                updateStatus();
+                if (chess.game_over()) {
+                    document.getElementById("status").textContent =
+                        chess.in_checkmate()
+                            ? (chess.turn() === "w" ? "Black" : "White") +
+                            " wins by checkmate!"
+                            : "The chess game is over!";
+                    return;
+                }
+                questionPlayer = chess.turn() === "w" ? "white" : "black";
+                currentPlayer = questionPlayer;
+                document.getElementById("game").style.display = "none";
+                document.getElementById("questions").style.display = "flex";
+                ask();
+            } catch (error) {
+                console.error("Chess move error:", error);
+            }
+        }
+        function switchToNextQuestion() {
+            document.getElementById("game").style.display = "none";
+            document.getElementById("questions").style.display = "flex";
+            ask();
+        }
+        function resetGame() {
+            chess.reset();
+            currentPlayer = "white";
+            questionPlayer = "white";
+            selectedSquare = null;
+            document.getElementById("restart").textContent =
+                "Restart Game";
+            document.getElementById("game").style.display = "none";
+            document.getElementById("questions").style.display = "flex";
+            ask();
+        }
+        resetGame();
+    </script>
+</body>
+
+</html>
